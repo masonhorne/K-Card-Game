@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>k-Card Game</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico">
+  </head>
+  <body>
+    <div id="container">
+      <h1>k-Card Game</h1>
+      <div id="settings">
+        <div>
+          <p id="move-counter"></p><p> moves</p>
+          <p id="timer"></p>
+        </div>
+        <div id="btn-container">
+          <div id="shuffle-btn" class="btn">SHUFFLE</div>
+          <div id="submit-btn" class="btn hidden">SUBMIT</div>
+          <div id="reset-btn" class="btn">RESET</div>
+          <div id="settings-btn" class="btn">SETTINGS</div>
+        </div>
+      </div>
+      <div id="settings-modal" class="modal hidden">
+        <div class="modal-content">
+          <div id="close-settings-btn" class="close btn">&times;</div>
+          <h5 class="settings-header">Settings</h5>
+          <div class="settings-options">
+            <div class="setting-option">
+              <div class="checkbox-wrapper">
+                <input class="input-checkbox" id="dark-mode" type="checkbox" />
+                <label class="checkbox" for="dark-mode"><span class="checkbox-icon">
+                  <svg width="13px" height="10px" viewbox="0 0 13 10">
+                    <polyline points="1 6 4.5 9 11 1"></polyline>
+                  </svg></span><span class="checkbox-label">Dark Mode</span>
+                </label>
+              </div>
+            </div>
+            <div class="setting-option">
+              <div class="checkbox-wrapper setting-option">
+                <input class="input-checkbox" id="blind-mode" type="checkbox" />
+                <label class="checkbox" for="blind-mode"><span class="checkbox-icon">
+                  <svg width="13px" height="10px" viewbox="0 0 13 10">
+                    <polyline points="1 6 4.5 9 11 1"></polyline>
+                  </svg></span><span class="checkbox-label">Blind Mode</span>
+                </label>
+              </div>
+            </div>
+            <label class="setting-option">
+              <input maxlength="2" type="text" id="card-count">
+              <span class="card-count-label">Number of cards</span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div id="overlay" class="overlay hidden"></div>
+      <div id="table"></div>
+      <div id="hand">
+        <div id="left-hand" class="card buffer-card"></div>
+        <div id="right-hand" class="card hidden"></div>
+      </div>
+    </div>
+    <script src="app.js"></script>
+  </body>

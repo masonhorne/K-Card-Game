@@ -1,0 +1,272 @@
+:root {
+    --primary: #faf8f6;
+    --secondary: #333333;
+    --tertiary: #cfcfcf;
+    --quaternary: #FF6961;
+}
+
+/* Dark Mode */
+/* :root {
+    --primary: #333333;
+    --secondary: #faf8f6;
+    --tertiary: #cfcfcf;
+} */
+
+body {
+    font-family: Roboto, sans-serif;
+    font-size: 30px;
+    color: var(--secondary);
+    font-weight: bold;
+    background-color: var(--primary);
+    transition: all 0.5s ease;
+}
+
+#timer {
+    padding-left: 16px;
+}
+
+.card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 250px;
+    min-width: 200px;
+    border-radius: 15px;
+    margin: 0.5rem 0.5rem;
+    position: relative;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    text-align: center;
+    border: var(--secondary) solid 4px;
+}
+
+@media screen and (min-device-width: 640px)  {
+    .card {
+        min-height: 150px;
+        min-width: 100px;
+    }
+}
+
+.card:hover:not(#left-hand):not(#right-hand) {
+    cursor: pointer;
+    transition: all 0.1s ease;
+    box-shadow: 0 16px 24px 0 rgba(0,0,0,0.5);
+}
+
+#table {
+    margin-top: 0.25rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+#hand {
+    position: relative;
+}
+
+#left-hand {
+    position: absolute;
+    left: 0;
+    background: transparent;
+    overflow: hidden;
+
+}
+
+#right-hand {
+    position: absolute;
+    right: 0;
+}
+
+.buffer-card {
+    background: transparent;
+    overflow: hidden;
+}
+
+.buffer-card:before {
+    background: transparent;
+    overflow: hidden;
+    content: " ";
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    top: -50%;
+    left: -50%;
+    background-image: url(https://raw.githubusercontent.com/dtolnay/colorous/readme/turbo.png);
+    background-size: contain;
+    z-index: -1;
+    transform: rotate(30deg);
+}
+
+.btn {
+    font-size: 20px;
+    padding: 2px 4px;
+    vertical-align: middle;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: 0.1s ease all;
+    display: flex;
+    align-items: center;
+}
+
+.btn:hover {
+    background-color: var(--tertiary);
+}
+
+.btn-container {
+    display: flex;
+    justify-content: end;
+}
+
+#container {
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    padding: 0 5rem 10rem 5rem;
+}
+
+#settings {
+    display: flex;
+    justify-content: space-between;
+}
+
+#settings div { 
+    display: inline;
+}
+
+.settings-header {
+    margin: 0 10px;
+    display: inline;
+}
+
+#settings p {
+    display: inline;
+}
+
+.settings-options {
+    font-size: 15px;
+    padding: 12px 4px;
+    display: flex;
+    flex-direction: column;
+}
+
+.setting-option {
+    margin: 4px 0;
+}
+
+.modal {
+    position: fixed;
+    z-index: 100;
+    left: 50%;
+    top: 50%;
+    width: 50%;
+    height: 25%;
+    transform: translate(-50%, -50%);
+    overflow: auto;
+    background-color: var(--primary);
+    border-radius: 8px;
+}
+
+.modal-content {
+    border-radius: 8px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 99;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: var(--secondary);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.checkbox-wrapper input {
+    display: none;
+    visibility: hidden;
+}
+
+
+.checkbox span {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.checkbox-icon {
+    width: 18px;
+    height: 18px;
+    border-radius: 3px;
+    transform: scale(1);
+    vertical-align: middle;
+    border: 1px solid var(--tertiary);
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.checkbox-icon svg {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    fill: none;
+    stroke: var(--secondary);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 16px;
+    stroke-dashoffset: 16px;
+    transition: all 0.3s ease;
+    transition-delay: 0.1s;
+}
+
+.input-checkbox:checked + .checkbox-icon {
+    background: var(--secondary);
+    border-color: var(--secondary);
+}
+
+.input-checkbox:checked + .checkbox .checkbox-icon svg {
+    stroke-dashoffset: 0;
+}
+
+.checkbox-label {
+    padding-left: 12px;
+}
+
+.card-count-label {
+    padding-left: 8px;
+}
+
+#card-count {
+    max-width: 14px;
+    border: var(--tertiary) solid 1px;
+    border-radius: 3px;
+    background-color: var(--primary);
+    color: var(--secondary);
+    font-family: sans-serif;
+    text-align: center;
+}
+
+#card-count.error {
+    border: var(--quaternary) solid 1px;
+}
+
+#card-count:focus {
+    outline: none;
+}
+
+.hidden {
+    display: none !important;
+}

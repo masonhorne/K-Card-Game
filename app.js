@@ -265,11 +265,13 @@ class Settings {
     BLIND_MODE_SETTING_ID = 'blindMode';
     CARD_COUNT_SETTING_ID = 'cardCount';
     DARK_MODE_SETTING_ID = 'darkMode';
+    CARD_LETTER_LABEL_SETTING_ID = 'cardLabel';
     DEFAULT_BLIND_MODE = false;
     DEFAULT_CARD_COUNT = 8;
     DEFAULT_DARK_MODE = false;
-    DEFAULT_SETTINGS = [this.DEFAULT_BLIND_MODE, this.DEFAULT_CARD_COUNT, this.DEFAULT_DARK_MODE];
-    SETTING_IDS = [this.BLIND_MODE_SETTING_ID, this.CARD_COUNT_SETTING_ID, this.DARK_MODE_SETTING_ID];
+    DEFAULT_CARD_LETTER_LABEL = false;
+    DEFAULT_SETTINGS = [this.DEFAULT_BLIND_MODE, this.DEFAULT_CARD_COUNT, this.DEFAULT_DARK_MODE, this.DEFAULT_LETTER_CARD_LABEL];
+    SETTING_IDS = [this.BLIND_MODE_SETTING_ID, this.CARD_COUNT_SETTING_ID, this.DARK_MODE_SETTING_ID, this.CARD_LETTER_LABEL_SETTING_ID];
 
     constructor() {
         // Initialize a local storage reference for saving settings
@@ -376,6 +378,7 @@ class App {
         this.cardCountInputElement = document.getElementById('card-count');
         this.darkModeInputElement = document.getElementById('dark-mode');
         this.blindModeInputElement = document.getElementById('blind-mode');
+        this.letterLabelsInputElement = document.getElementById('letter-labels');
         this.colorVariables = document.querySelector(':root');
         // Initialize internal state variables
         this.settingsModalOpen = false;
@@ -388,6 +391,7 @@ class App {
         this.modalOverlayElement.onclick = () => this.toggleSettingsMenu();
         this.darkModeInputElement.onchange = () => this.updateDarkMode();
         this.blindModeInputElement.onchange = () => this.updateBlindMode();
+        this.letterLabelsInputElement.onchange = () => this.updateLetterLabels();
         this.cardCountInputElement.onchange = () => this.updateCardCount();
         this.resetButtonElement.onclick = () => this.setInitialGameState();
         this.shuffleButtonElement.onclick = () => this.shuffleCards();
@@ -396,6 +400,8 @@ class App {
         this.cardCountInputElement.value = this.settings.getSetting(this.settings.CARD_COUNT_SETTING_ID);
         this.darkModeInputElement.checked = this.settings.getSetting(this.settings.DARK_MODE_SETTING_ID) === 'true';
         this.updateDarkMode();
+        this.letterLabelsInputElement.checked = this.settings.getSetting(this.settings.CARD_LETTER_LABEL_SETTING_ID) === 'true';
+        this.updateLetterLabels();
         this.blindModeInputElement.checked = this.settings.getSetting(this.settings.BLIND_MODE_SETTING_ID) === 'true';
         // This will also set the initial game state for the proper mode
         this.updateBlindMode();
@@ -418,11 +424,12 @@ class App {
     }
 
     setInitialCardState() {
+        const letterLabels = this.settings.getSetting(this.settings.CARD_LETTER_LABEL_SETTING_ID);
         // Loop through setting card colors and text while removing buffer-card class
         for(let i = 0; i < this.cardElements.length; i++) {
             const colorIndex = Math.floor((i / this.cardElements.length) * (colorCodes.length - 1));
             this.cardElements[i].style.backgroundColor = colorCodes[colorIndex];
-            this.cardElements[i].textContent = `${i + 1}`;
+            this.cardElements[i].textContent = letterLabels ? String.fromCharCode('A'.charCodeAt(0) + i) : `${i + 1}`;
             this.cardElements[i].identifier = `${i + 1}`;
             this.cardElements[i].classList.remove('buffer-card');
         }
@@ -526,6 +533,14 @@ class App {
             this.cardCountInputElement.classList.remove('error');
             this.setInitialGameState();
         }
+    }
+
+    updateLetterLabels() {
+        // Retrieve the input value and save it into page settings
+        const letterLabelsInputValue = this.letterLabelsInputElement.checked;
+        this.settings.saveSetting(this.settings.CARD_LETTER_LABEL_SETTING_ID, letterLabelsInputValue);
+        // Initialize the game state for updated settings
+        this.setInitialGameState();
     }
 
     swapCards(cardToSwap) {

@@ -379,6 +379,7 @@ class App {
         this.darkModeInputElement = document.getElementById('dark-mode');
         this.blindModeInputElement = document.getElementById('blind-mode');
         this.letterLabelsInputElement = document.getElementById('letter-labels');
+        this.optimalMovesElement = document.getElementById('optimal-moves');
         this.colorVariables = document.querySelector(':root');
         // Initialize internal state variables
         this.settingsModalOpen = false;
@@ -455,6 +456,7 @@ class App {
         // Populate variables for game state
         this.totalMoves = 0;
         this.blinded = false;
+        this.disableOptimalMoveDisplay();
         // Reset the move counter and timer
         this.moveCounterElement.textContent = this.totalMoves;
         this.timer.resetTimer();
@@ -491,12 +493,34 @@ class App {
 
     submitSolution() {
         if(this.timer.interval && this.verifySolution()) {
-            this.timer.stopTimer();
             this.setInitialCardState();
             this.toggleBlindModeSubmitButton();
+            this.enableOptimalMovesDisplay();
+            this.timer.stopTimer();
         }
     }
 
+    enableOptimalMovesDisplay() {
+        // This has the assumption that the timer is not stopped before enabling the display
+        if(this.timer.interval) {
+            // Remove previously used classes
+            this.optimalMovesElement.classList.remove('hidden');
+            this.optimalMovesElement.classList.remove('optimal');
+            this.optimalMovesElement.classList.remove('non-optimal');
+            // Set the display text with the proper color
+            if(this.totalMoves === this.optimalMoves) {
+                this.optimalMovesElement.textContent = 'Optimal solution!';
+                this.optimalMovesElement.classList.add('optimal');
+            } else {
+                this.optimalMovesElement.textContent = `${this.totalMoves - this.optimalMoves} moves from optimal solution!`;
+                this.optimalMovesElement.classList.add('non-optimal');
+            }
+        }
+    }
+
+    disableOptimalMoveDisplay() {
+        this.optimalMovesElement.classList.add('hidden');
+    }
 
     enableBlindMode() {
         // Loop through removing card text, background colors, and buffer classes
@@ -578,7 +602,10 @@ class App {
         // If we just started blind mode, update the board state
         if(this.blindMode && !this.blinded) this.enableBlindMode();
         // If we finished a regular game, stop the timer
-        if(!this.blindMode && this.verifySolution()) this.timer.stopTimer();
+        if(!this.blindMode && this.verifySolution()) {
+            this.enableOptimalMovesDisplay();
+            this.timer.stopTimer();
+        }
     }
 
     shuffleCards() {
@@ -596,6 +623,26 @@ class App {
             [cards[0].style.backgroundColor, cards[1].style.backgroundColor] = [cards[1].style.backgroundColor, cards[0].style.backgroundColor];
             [cards[0].identifier, cards[1].identifier] = [cards[1].identifier, cards[0].identifier];
         }
+        // Calculate the optimal solution move count for this shuffle
+        let permutationCycles = 0, misplacedCards = 0;
+        const visited = new Array(cardCount).fill(false);
+        for(let i = 0; i < cardCount; i++) {
+            // If the card is misplaced, increment the total misplaced cards
+            if(this.cardElements[i].identifier !== `${i + 1}`) {
+                let currentValue = Number(this.cardElements[i].identifier) - 1;
+                misplacedCards += 1;
+                // If we have a new cycle, trace it until we have completed it
+                if(!visited[currentValue]) {
+                    while(!visited[currentValue]){
+                        visited[currentValue] = true;
+                        currentValue = Number(this.cardElements[currentValue].identifier) - 1;
+                    }
+                    permutationCycles += 1;
+                }
+            }
+        }
+        // Store the optimal move count for this hand
+        this.optimalMoves = misplacedCards + permutationCycles;
         // Start the timer for the game
         this.timer.startTimer();
     }

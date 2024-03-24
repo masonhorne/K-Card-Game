@@ -3,6 +3,7 @@
     --secondary: #333333;
     --tertiary: #cfcfcf;
     --quaternary: #FF6961;
+    --quinary: #2ECC71;
 }
 
 /* Dark Mode */
@@ -19,10 +20,6 @@ body {
     font-weight: bold;
     background-color: var(--primary);
     transition: all 0.5s ease;
-}
-
-#timer {
-    padding-left: 16px;
 }
 
 .card {
@@ -150,6 +147,22 @@ body {
 
 .setting-option {
     margin: 4px 0;
+}
+
+.move-label {
+    padding-right: 16px;
+}
+
+#optimal-moves {
+    font-size: 16px;
+}
+
+.optimal {
+    color: var(--quinary);
+}
+
+.non-optimal {
+    color: var(--quaternary);
 }
 
 .modal {

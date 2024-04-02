@@ -424,14 +424,17 @@ class App {
         }
     }
 
-    setInitialCardState() {
+    setInitialCardState(permutation = undefined) {
+        // Initialize the default permutation if not provided
+        if(!permutation) permutation = Array.from({length: this.cardElements.length}, (_, i) => i + 1);
         const letterLabels = this.settings.getSetting(this.settings.CARD_LETTER_LABEL_SETTING_ID);
         // Loop through setting card colors and text while removing buffer-card class
         for(let i = 0; i < this.cardElements.length; i++) {
-            const colorIndex = Math.floor((i / this.cardElements.length) * (colorCodes.length - 1));
+            const cardId = permutation[i];
+            const colorIndex = Math.floor((cardId / this.cardElements.length) * (colorCodes.length - 1));
             this.cardElements[i].style.backgroundColor = colorCodes[colorIndex];
-            this.cardElements[i].textContent = letterLabels ? String.fromCharCode('A'.charCodeAt(0) + i) : `${i + 1}`;
-            this.cardElements[i].identifier = `${i + 1}`;
+            this.cardElements[i].textContent = letterLabels ? String.fromCharCode('A'.charCodeAt(0) + cardId - 1) : `${cardId}`;
+            this.cardElements[i].identifier = `${cardId}`;
             this.cardElements[i].classList.remove('buffer-card');
         }
         // Update the left and right hands to their initial state
@@ -608,21 +611,43 @@ class App {
         }
     }
 
+    factorial(n) {
+        // Calculate the factorial value of the input number
+        let result = 1;
+        for(let i = 1; i <= n; i++) result *= i;
+        return result;
+    }
+
+    random(low, high) {
+        // Helper for generating random number in range [low, high]
+        return Math.floor(Math.random() * (high - low + 1) + low);
+    }
+
     shuffleCards() {
         // Set the game to a fresh state
         this.setInitialGameState();
         // Read in the total cards we are shuffling
-        const cardCount = this.settings.getSetting(this.settings.CARD_COUNT_SETTING_ID);
-        // Shuffle the cards where each permutation is equally likely
-        for(let i = 0; i < cardCount; i++) {
-            const randomIndex = Math.floor(Math.random() * (cardCount - i)) + i;
-            const randomCard = this.cardElements[randomIndex];
-            const swapCard = this.cardElements[i];
-            const cards = [randomCard, swapCard];
-            [cards[0].textContent, cards[1].textContent] = [cards[1].textContent, cards[0].textContent];
-            [cards[0].style.backgroundColor, cards[1].style.backgroundColor] = [cards[1].style.backgroundColor, cards[0].style.backgroundColor];
-            [cards[0].identifier, cards[1].identifier] = [cards[1].identifier, cards[0].identifier];
+        const cardCount = Number(this.settings.getSetting(this.settings.CARD_COUNT_SETTING_ID));
+        // Initialize variables required for generating a random permutation
+        const totalPermutations = this.factorial(cardCount);
+        let permutationNumber = this.random(1, totalPermutations);
+        const availableCards = Array(cardCount).fill(1);
+        const permutation = [];
+        // Loop through selecting cards based on the random permutation number that was chosen
+        for(let i = cardCount - 1; i >= 0; i--) {
+            const remainingPermutationNumber = this.factorial(i);
+            let nextCard = Math.floor(permutationNumber / remainingPermutationNumber);
+            permutationNumber %= remainingPermutationNumber;
+            let cardIndex = 0;
+            while(nextCard > 0 || availableCards[cardIndex] === 0){
+                if(availableCards[cardIndex] === 1) nextCard -= 1;
+                cardIndex += 1;
+            }
+            availableCards[cardIndex] = 0;
+            permutation.push(cardIndex + 1);
         }
+        // Set the initial card state based on the random permutation we generated
+        this.setInitialCardState(permutation);
         // Calculate the optimal solution move count for this shuffle
         let permutationCycles = 0, misplacedCards = 0;
         const visited = new Array(cardCount).fill(false);
